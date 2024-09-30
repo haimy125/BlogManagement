@@ -5,8 +5,8 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.hibernate.engine.internal.Cascade;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.Set;
 
@@ -26,8 +26,8 @@ public class Users {
     @JoinColumn(name = "account_id", referencedColumnName = "account_id")
     private Accounts accounts;
 
-    @OneToMany(mappedBy = "users")
-    private Set<Roles> rolesSet;
+    @OneToMany(mappedBy = "users", cascade = CascadeType.ALL)
+    private Set<UserRoles> userRoles;
 
     @Column(name = "first_name")
     private String firstName;
@@ -41,7 +41,7 @@ public class Users {
     @Column(name = "avatar")
     private String avatar;
 
-    @Column(name = "dateOfBirth")
+    @Column(name = "dateofbirth")
     private Date dateOfBirth;
 
     @Column(name = "address")
@@ -50,9 +50,20 @@ public class Users {
     @Column(name = "bio")
     private String bio;
 
-    @Column(name = "created_at")
-    private String created_at;
+    @Column(name = "created_at", updatable = false)
+    private LocalDateTime createdAt;
 
     @Column(name = "updated_at")
-    private String updated_at;
+    private LocalDateTime updatedAt;
+
+    @PrePersist
+    protected void onCreate() {
+        createdAt = LocalDateTime.now();
+        updatedAt = LocalDateTime.now();
+    }
+
+    @PreUpdate
+    protected void onUpdate() {
+        updatedAt = LocalDateTime.now();
+    }
 }

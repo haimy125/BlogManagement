@@ -26,10 +26,9 @@ public class Roles {
     @Column(name = "description")
     private String description;
 
-    @OneToMany(mappedBy = "roles")
+    @OneToMany(mappedBy = "roles", cascade = CascadeType.ALL)
     private Set<RolePermissions> rolePermissions;
 
-    @ManyToOne
-    @JoinColumn(name = "user_id", nullable = false)
-    private Users users;
+    @OneToMany(mappedBy = "roles")
+    private Set<UserRoles> userRoles;
 }

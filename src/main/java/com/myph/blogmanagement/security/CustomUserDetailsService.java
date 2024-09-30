@@ -41,10 +41,14 @@ public class CustomUserDetailsService implements UserDetailsService {
             throw new UsernameNotFoundException("User not found with account ID: " + accounts.getAccountId());
         }
         // Lấy role_id của người dùng
-        Set<Roles> rolesSet = user.getRolesSet();
+        Set<UserRoles> userRoles = user.getUserRoles();
+
         // Tạo danh sách quyền từ các roles
         List<GrantedAuthority> authorities = new ArrayList<>();
-        for (Roles role : rolesSet) {
+        for (UserRoles userRole : userRoles) {
+
+            Roles role = userRole.getRoles();
+
             // Thêm role như là một GrantedAuthority
             authorities.add(new SimpleGrantedAuthority(role.getRoleName()));
 

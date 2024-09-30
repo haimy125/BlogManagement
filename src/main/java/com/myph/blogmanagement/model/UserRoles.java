@@ -1,6 +1,6 @@
 package com.myph.blogmanagement.model;
 
-import com.myph.blogmanagement.model.keys.RolePermissionsKey;
+import com.myph.blogmanagement.model.keys.UserRolesKey;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -8,23 +8,23 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
-@Table(name = "rolepermissions")
+@Table(name = "userroles")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class RolePermissions {
+public class UserRoles {
 
     @EmbeddedId
-    private RolePermissionsKey rolePermissionsKey;
+    private UserRolesKey userRolesKey;
+
+    @ManyToOne
+    @MapsId("userId")
+    @JoinColumn(name = "user_id")
+    private Users users;
 
     @ManyToOne
     @MapsId("roleId")
     @JoinColumn(name = "role_id")
     private Roles roles;
-
-    @ManyToOne
-    @MapsId("permissionId")
-    @JoinColumn(name = "permission_id")
-    private Permissions permissions;
 }
