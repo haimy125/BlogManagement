@@ -1,9 +1,9 @@
 package com.myph.blogmanagement.utils;
 
+import io.github.cdimascio.dotenv.Dotenv;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import javax.crypto.SecretKey;
@@ -11,15 +11,16 @@ import javax.crypto.SecretKey;
 @Component
 public class JwtUtilsHelper {
 
-    @Value("${jwt.privateKey}")
-    private String privateKey;
+    private final String privateKey;
+
+    public JwtUtilsHelper() {
+        Dotenv dotenv = Dotenv.load();  // Load các biến môi trường từ file .env
+        this.privateKey = dotenv.get("JWT_PRIVATE_KEY");  // Lấy giá trị của JWT_PRIVATE_KEY
+    }
 
     public String generateToken(String data) {
-
         SecretKey key = Keys.hmacShaKeyFor(Decoders.BASE64.decode(privateKey));
-        String jws = Jwts.builder().subject(data).signWith(key).compact();
-
-        return jws;
+        return Jwts.builder().subject(data).signWith(key).compact();
     }
 
     public boolean verifyToken (String token) {
