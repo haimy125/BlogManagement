@@ -43,6 +43,16 @@ public class LoginServiceImpl implements LoginService {
     @Override
     public boolean checkLogin(String username, String password) {
         Accounts accounts = accountsRepository.findByUsername(username);
+
+        if (accounts==null) {
+            throw new RuntimeException("Username không tồn tại!");
+        }
+
+        // Kiểm tra mật khẩu đã mã hóa có khớp với mật khẩu đầu vào không
+        if (!passwordEncoder.matches(password, accounts.getPassword())) {
+            throw new RuntimeException("Mật khẩu không chính xác!");
+        }
+
         return passwordEncoder.matches(password, accounts.getPassword());
     }
 
