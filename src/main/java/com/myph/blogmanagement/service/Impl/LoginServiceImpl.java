@@ -59,7 +59,12 @@ public class LoginServiceImpl implements LoginService {
         accounts.setUsername(signUpRequest.getUsername());
         accounts.setPassword(passwordEncoder.encode(signUpRequest.getPassword()));
 
-        users.setUserId(Base64.getEncoder().encodeToString(("myph" + System.currentTimeMillis()).getBytes()));
+        Optional<Accounts> exist = Optional.ofNullable(accountsRepository.findByUsername(signUpRequest.getUsername()));
+        if (exist.isPresent()) {
+            throw new RuntimeException("Username already exists");
+        }
+
+        users.setUserId(Base64.getEncoder().encodeToString((signUpRequest.getUsername()+ System.currentTimeMillis()).getBytes()));
         users.setFirstName(signUpRequest.getFirst_name());
         users.setLastName(signUpRequest.getLast_name());
         users.setAccounts(accounts);
