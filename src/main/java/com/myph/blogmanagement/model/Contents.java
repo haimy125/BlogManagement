@@ -7,27 +7,35 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
+import java.util.Set;
 
 @Entity
-@Table(name = "Accounts")
+@Table(name = "contents")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class Accounts {
+public class Contents {
 
     @Id
-    @Column(name = "account_id")
-    private String accountId;
+    @Column(name = "content_id")
+    private String contentId;
 
-    @OneToOne(mappedBy = "accounts")
+    @ManyToOne
+    @JoinColumn(name = "user_id")
     private Users users;
 
-    @Column(name = "username")
-    private String username;
+    @OneToMany(mappedBy = "contents", cascade = CascadeType.ALL)
+    private Set<Comments> commentsSet;
 
-    @Column(name = "password")
-    private String password;
+    @Column(name = "title")
+    private String title;
+
+    @Column(name = "body")
+    private String body;
+
+    @Column(name = "image")
+    private String image;
 
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;

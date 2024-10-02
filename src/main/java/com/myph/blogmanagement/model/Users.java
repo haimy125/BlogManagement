@@ -29,6 +29,15 @@ public class Users {
     @OneToMany(mappedBy = "users", cascade = CascadeType.ALL)
     private Set<UserRoles> userRoles;
 
+    @OneToMany(mappedBy = "users", cascade = CascadeType.ALL)
+    private Set<Contents> contents;
+
+    @OneToMany(mappedBy = "users", cascade = CascadeType.ALL)
+    private Set<Comments> comments;
+
+    @OneToMany(mappedBy = "users", cascade = CascadeType.ALL)
+    private Set<Contacts> contacts;
+
     @Column(name = "first_name")
     private String firstName;
 
@@ -55,6 +64,9 @@ public class Users {
 
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
+
+    @Column(name = "deleted_flag")
+    private boolean deletedFlag;
 
     @PrePersist
     protected void onCreate() {

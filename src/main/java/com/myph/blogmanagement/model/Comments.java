@@ -9,25 +9,33 @@ import lombok.Setter;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "Accounts")
+@Table(name = "comments")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class Accounts {
+public class Comments {
 
     @Id
-    @Column(name = "account_id")
-    private String accountId;
+    @Column(name = "comment_id")
+    private String commentId;
 
-    @OneToOne(mappedBy = "accounts")
+    @ManyToOne
+    @JoinColumn(name = "user_id")
     private Users users;
 
-    @Column(name = "username")
-    private String username;
+    @ManyToOne
+    @JoinColumn(name = "content_id")
+    private Contents contents;
 
-    @Column(name = "password")
-    private String password;
+    @Column(name = "body")
+    private String body;
+
+    @Column(name = "image")
+    private String image;
+
+    @Column(name = "parent_id")
+    private String parentId;
 
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;
