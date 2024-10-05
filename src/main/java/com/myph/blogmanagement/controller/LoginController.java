@@ -1,9 +1,15 @@
 package com.myph.blogmanagement.controller;
 
+import com.myph.blogmanagement.model.Accounts;
+import com.myph.blogmanagement.model.Users;
 import com.myph.blogmanagement.payload.ResponseData;
-import com.myph.blogmanagement.payload.request.SignUpRequest;
+import com.myph.blogmanagement.payload.request.SignInRequestDTO;
+import com.myph.blogmanagement.payload.request.SignUpRequestDTO;
+import com.myph.blogmanagement.repository.AccountsRepository;
+import com.myph.blogmanagement.repository.UsersRepository;
 import com.myph.blogmanagement.service.LoginService;
 import com.myph.blogmanagement.utils.JwtUtilsHelper;
+import jakarta.persistence.Access;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,10 +26,16 @@ public class LoginController {
     @Autowired
     private JwtUtilsHelper jwtUtilsHelper;
 
+    @Autowired
+    private AccountsRepository accountsRepository;
+
+    @Autowired
+    private UsersRepository usersRepository;
+
     @PostMapping("/signin")
-    public ResponseEntity<?> signin(@RequestParam String username, @RequestParam String password) {
+    public ResponseEntity<?> signin(@RequestBody SignInRequestDTO signInRequestDTO) {
         ResponseData responseData = new ResponseData();
-        if (username == null || password == null) {
+        if (signInRequestDTO.getUsername() == null || signInRequestDTO.getPassword() == null) {
             responseData.setStatus(400);
             responseData.setSuccess(false);
             responseData.setData("");
@@ -31,9 +43,12 @@ public class LoginController {
             return new ResponseEntity<>(responseData, HttpStatus.BAD_REQUEST);
         }
 
-        if (loginService.checkLogin(username, password)) {
+        if (loginService.checkLogin(signInRequestDTO)) {
+            Accounts accounts = accountsRepository.findByUsername(signInRequestDTO.getUsername());
+            Users users = usersRepository.findByAccounts_AccountId(accounts.getAccountId());
             responseData.setDesc("Đăng nhập thành công.");
-            responseData.setData(jwtUtilsHelper.generateToken(username));
+            responseData.setData(jwtUtilsHelper.generateToken(signInRequestDTO.getUsername()));
+            responseData.setUserId(users.getUserId());
             return new ResponseEntity<>(responseData, HttpStatus.OK);
         } else {
             responseData.setStatus(401);
@@ -45,12 +60,13 @@ public class LoginController {
     }
 
     @PostMapping("/signup")
-    public ResponseEntity<?> signup(@RequestBody SignUpRequest signUpRequest) {
+    public ResponseEntity<?> signup(@RequestBody SignUpRequestDTO signUpRequestDTO) {
         ResponseData responseData = new ResponseData();
         try {
-            boolean success =  loginService.signup(signUpRequest);
+            boolean success =  loginService.signup(signUpRequestDTO);
             if (success) {
-                responseData.setDesc("Signup successful.");
+                responseData.setDesc("User registered successfully");
+                responseData.setData("User registered successfully");
                 return new ResponseEntity<>(responseData, HttpStatus.CREATED); // HTTP 201 Created
             }else {
                 responseData.setStatus(400);

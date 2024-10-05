@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
+import java.util.HashSet;
 import java.util.Set;
 
 @Entity
@@ -26,16 +27,13 @@ public class Contents {
     private Users users;
 
     @OneToMany(mappedBy = "contents", cascade = CascadeType.ALL)
-    private Set<Comments> commentsSet;
+    private Set<Comments> commentsSet = new HashSet<>(); // Khởi tạo là tập rỗng
 
-    @Column(name = "title")
+    @Column(name = "title", columnDefinition = "TEXT")
     private String title;
 
-    @Column(name = "body")
+    @Column(name = "body", columnDefinition = "TEXT")
     private String body;
-
-    @Column(name = "image")
-    private String image;
 
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;
@@ -44,7 +42,7 @@ public class Contents {
     private LocalDateTime updatedAt;
 
     @Column(name = "deleted_flag")
-    private boolean deletedFlag;
+    private boolean deletedFlag = false;
 
     @PrePersist
     protected void onCreate() {

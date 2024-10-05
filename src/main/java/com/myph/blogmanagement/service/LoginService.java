@@ -1,8 +1,9 @@
 package com.myph.blogmanagement.service;
 
-import com.myph.blogmanagement.payload.request.SignUpRequest;
+import com.myph.blogmanagement.payload.request.SignInRequestDTO;
+import com.myph.blogmanagement.payload.request.SignUpRequestDTO;
 
 public interface LoginService {
-    boolean checkLogin(String username, String password);
-    boolean signup(SignUpRequest signUpRequest);
+    boolean checkLogin(SignInRequestDTO signInRequestDTO);
+    boolean signup(SignUpRequestDTO signUpRequestDTO);
 }

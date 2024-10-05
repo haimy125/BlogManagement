@@ -36,7 +36,7 @@ public class Accounts {
     private LocalDateTime updatedAt;
 
     @Column(name = "deleted_flag")
-    private boolean deletedFlag;
+    private boolean deletedFlag = false;
 
     @PrePersist
     protected void onCreate() {

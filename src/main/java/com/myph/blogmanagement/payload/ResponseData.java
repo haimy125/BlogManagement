@@ -10,4 +10,5 @@ public class ResponseData {
     private boolean isSuccess = true;
     private String desc;
     private Object data;
+    private String userId = "";
 }

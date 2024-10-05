@@ -5,7 +5,8 @@ import com.myph.blogmanagement.model.Roles;
 import com.myph.blogmanagement.model.UserRoles;
 import com.myph.blogmanagement.model.Users;
 import com.myph.blogmanagement.model.keys.UserRolesKey;
-import com.myph.blogmanagement.payload.request.SignUpRequest;
+import com.myph.blogmanagement.payload.request.SignInRequestDTO;
+import com.myph.blogmanagement.payload.request.SignUpRequestDTO;
 import com.myph.blogmanagement.repository.AccountsRepository;
 import com.myph.blogmanagement.repository.RolesRepository;
 import com.myph.blogmanagement.repository.UserRolesRepository;
@@ -41,19 +42,19 @@ public class LoginServiceImpl implements LoginService {
      * @return
      */
     @Override
-    public boolean checkLogin(String username, String password) {
-        Accounts accounts = accountsRepository.findByUsername(username);
+    public boolean checkLogin(SignInRequestDTO signInRequestDTO) {
+        Accounts accounts = accountsRepository.findByUsername(signInRequestDTO.getUsername());
 
         if (accounts==null) {
             throw new RuntimeException("Username không tồn tại!");
         }
 
         // Kiểm tra mật khẩu đã mã hóa có khớp với mật khẩu đầu vào không
-        if (!passwordEncoder.matches(password, accounts.getPassword())) {
+        if (!passwordEncoder.matches(signInRequestDTO.getPassword(), accounts.getPassword())) {
             throw new RuntimeException("Mật khẩu không chính xác!");
         }
 
-        return passwordEncoder.matches(password, accounts.getPassword());
+        return passwordEncoder.matches(signInRequestDTO.getPassword(), accounts.getPassword());
     }
 
     /**
@@ -61,13 +62,14 @@ public class LoginServiceImpl implements LoginService {
      * @return
      */
     @Override
-    public boolean signup(SignUpRequest signUpRequest) {
+    public boolean signup(SignUpRequestDTO signUpRequest) {
         Users users = new Users();
         Accounts accounts = new Accounts();
 
         accounts.setAccountId(UUID.randomUUID().toString());
         accounts.setUsername(signUpRequest.getUsername());
         accounts.setPassword(passwordEncoder.encode(signUpRequest.getPassword()));
+        accounts.setDeletedFlag(false);
 
         Optional<Accounts> exist = Optional.ofNullable(accountsRepository.findByUsername(signUpRequest.getUsername()));
         if (exist.isPresent()) {
@@ -77,6 +79,7 @@ public class LoginServiceImpl implements LoginService {
         users.setUserId(Base64.getEncoder().encodeToString((signUpRequest.getUsername()+ System.currentTimeMillis()).getBytes()));
         users.setFirstName(signUpRequest.getFirst_name());
         users.setLastName(signUpRequest.getLast_name());
+        users.setDeletedFlag(false);
         users.setAccounts(accounts);
 
         try {
