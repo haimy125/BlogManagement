@@ -40,6 +40,7 @@ public class LoginController {
             responseData.setSuccess(false);
             responseData.setData("");
             responseData.setDesc("Thiếu thông tin đăng nhập.");
+            responseData.setUserId("Không tìm thấy user");
             return new ResponseEntity<>(responseData, HttpStatus.BAD_REQUEST);
         }
 
@@ -54,6 +55,7 @@ public class LoginController {
             responseData.setStatus(401);
             responseData.setData("");
             responseData.setSuccess(false);
+            responseData.setUserId("Không tìm thấy user");
             responseData.setDesc("Tên người dùng hoặc mật khẩu không chính xác.");
             return new ResponseEntity<>(responseData, HttpStatus.UNAUTHORIZED);// HTTP 401 Unauthorized
         }
