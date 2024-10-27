@@ -9,16 +9,15 @@ import com.myph.blogmanagement.payload.response.ContentResponseDTO;
 import com.myph.blogmanagement.repository.ContentsRepository;
 import com.myph.blogmanagement.repository.UsersRepository;
 import com.myph.blogmanagement.service.ContentService;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Base64;
-import java.util.HashSet;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class ContentServiceImpl implements ContentService {
@@ -95,5 +94,38 @@ public class ContentServiceImpl implements ContentService {
             contentResponseDTOList.add(contentResponseDTO);
         }
         return contentResponseDTOList;
+    }
+
+    /**
+     * @param id
+     */
+    @Override
+    public ContentResponseDTO getContent(String id) {
+        Contents contents = contentsRepository.findById(id)
+                .orElseThrow(() -> new NoSuchElementException("Content not found with id: " + id));
+        return convertToDTO(contents);
+    }
+
+    public ContentResponseDTO convertToDTO(Contents contents) {
+        ContentResponseDTO contentResponseDTO = new ContentResponseDTO();
+        BeanUtils.copyProperties(contents, contentResponseDTO);
+
+        // Copy các thuộc tính khác nếu cần
+        contentResponseDTO.setUserId(contents.getUsers().getUserId());
+        contentResponseDTO.setFullName(contents.getUsers().getFirstName() + " " + contents.getUsers().getLastName());
+        contentResponseDTO.setAvatar(contents.getUsers().getAvatar());
+
+        // Chuyển đổi commentsSet sang commentResponseDTOList
+        List<CommentResponseDTO> commentResponseDTOList = contents.getCommentsSet().stream()
+                .map(comment -> {
+                    CommentResponseDTO dto = new CommentResponseDTO();
+                    BeanUtils.copyProperties(comment, dto);
+                    return dto;
+                })
+                .collect(Collectors.toList());
+
+        // Gán danh sách commentResponseDTOList vào contentResponseDTO
+        contentResponseDTO.setCommentResponseDTOList(commentResponseDTOList);
+        return contentResponseDTO;
     }
 }

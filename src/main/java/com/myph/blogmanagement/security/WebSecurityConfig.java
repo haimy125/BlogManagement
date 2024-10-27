@@ -40,7 +40,7 @@ public class WebSecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // không sử dụng session
                 .authorizeHttpRequests(request ->
-                        request.requestMatchers("/login/**", "/menu/file/**", "/content/getAll")
+                        request.requestMatchers("/login/**", "/menu/file/**","/content/**", "/content/getAll")
                                 .permitAll() // bypass
                                 .anyRequest().authenticated()
                 );
